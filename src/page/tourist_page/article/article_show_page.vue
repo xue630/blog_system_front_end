@@ -2,7 +2,7 @@
     <div class="art-container">
         <div class="select-area">
                 <div class="select-area-name-input">
-                    <el-input clearable placeholder="输入文章名称匹配"></el-input>
+                    <el-input v-model="ArticleListDTO.articleTitle" clearable placeholder="输入文章名称匹配"></el-input>
                 </div>
                 <div class="select-area-select-button">
                     <el-button type="primary" @click="select_by_name">
@@ -109,8 +109,21 @@ export default{
             //弹窗点击确认
             this.showDialog=false;
         },
-        select_by_name(){
+
+
+        async select_by_name(){
             //按名称搜索按钮功能
+            const response = await tourist_get_article_list(this.ArticleListDTO);
+            this.artList = response.data.data;
+
+            this.artList.forEach(element => {//将分类ID翻译为分类名称
+            const categoryItem = this.category.find(item => item.id === element.categoryId);
+            if (categoryItem) {
+                element.categoryName = categoryItem.categoryName;
+            } else {
+                element.categoryName = "未分类";
+            }
+        });
         },
         click_art_card(item){
             //点击卡片触发信息
@@ -151,7 +164,7 @@ export default{
         return{
             //DTO
             ArticleListDTO:{//用于请求文章列表
-                'articleName':'',
+                'articleTitle':'',
                 'tagIds':[],
                 'categoryId':''
             },

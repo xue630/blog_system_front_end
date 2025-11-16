@@ -2,7 +2,7 @@
     <div class="article-list-container">
         <div class="article-table-top">
             <div class="article-name-input-icon">
-                <el-input class="name-input" clearable v-model="ArticlePageQueryDTO.articleName" placeholder="输入名称匹配"/>
+                <el-input class="name-input" clearable v-model="ArticlePageQueryDTO.articleTitle" placeholder="输入名称匹配"/>
                 <el-button class="name-button" type="primary" @click="get_article_list">
                     搜索
                     <el-icon><Search/></el-icon>
@@ -12,7 +12,7 @@
 
                 <!-- 将其换成id列表 -->
 
-                <el-select placeholder="请选择文章类型" v-model="ArticlePageQueryDTO.categoryId" class="article-category-select" @change="category_change_select">
+                <el-select placeholder="请选择文章类型" v-model="ArticlePageQueryDTO.categoryId" class="article-category-select" @change="category_change_select" clearable>
                     <!-- 从后端查到类型列表循环渲染 -->
                     <el-option v-for="(item) in category" :key="item.id" :label="item.categoryName" :value="item.id" />
                 </el-select>
@@ -273,7 +273,7 @@ import { message } from '@/util/message_util/message_util';
                 },
 
                 ArticlePageQueryDTO:{
-                    articleName:'',//√
+                    articleTitle:'',//√
                     tagIds:[],//√
                     page:1,
                     pageSize:8,
@@ -448,15 +448,28 @@ import { message } from '@/util/message_util/message_util';
             });
 
             },
-            category_change_select(value){
+            async category_change_select(value){
                 //传入下拉框的坐标---
-                console.log("value:",value);
+                // console.log("value:",value);
+                const response = await page_query_article(this.ArticlePageQueryDTO);
+                this.article.List = response.data.data.records;
+                this.article.total = response.data.data.totals;
+
+                this.article.List.forEach(element => {//将前端id翻译为前端名称
+                element.categoryId = this.category.find(item => item.id === element.categoryId).categoryName;
+                });
             },
-            tag_closeHandler(item){
+            async tag_closeHandler(item){
                 //label的删除事件，传入的被删除实例
                 this.currentTag.splice(this.currentTag.indexOf(item),1);
                 this.ArticlePageQueryDTO.tagIds.splice(this.ArticlePageQueryDTO.tagIds.indexOf(item.id),1);
+                const response = await page_query_article(this.ArticlePageQueryDTO);
+                this.article.List = response.data.data.records;
+                this.article.total = response.data.data.totals;
 
+                this.article.List.forEach(element => {//将前端id翻译为前端名称
+                element.categoryId = this.category.find(item => item.id === element.categoryId).categoryName;
+                });
             },
             open_dialog(){
                 //开启弹窗按钮---
@@ -469,9 +482,16 @@ import { message } from '@/util/message_util/message_util';
                 this.oldTag='';
                 this.showDialog=false;
             },
-            dialog_confirm(){
+           async dialog_confirm(){
                 //标签弹窗点击确认
                 this.showDialog=false;
+                const response = await page_query_article(this.ArticlePageQueryDTO);
+                this.article.List = response.data.data.records;
+                this.article.total = response.data.data.totals;
+
+                this.article.List.forEach(element => {//将前端id翻译为前端名称
+                element.categoryId = this.category.find(item => item.id === element.categoryId).categoryName;
+                });
             },
 
 

@@ -3,7 +3,7 @@ import axios from "@/config/axios_config";
 export async function tourist_get_article_list(ArticleListDTO) {
     const response = await axios.get('/tourist/article',{
         params:{
-            'articleName':ArticleListDTO.articleName,
+            'articleTitle':ArticleListDTO.articleTitle,
             'tagIds':ArticleListDTO.tagIds,
             'categoryId':ArticleListDTO.categoryId
         }

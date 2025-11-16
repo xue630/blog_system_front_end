@@ -12,7 +12,7 @@ export async function add_article(ArticleDTO){
 export async function page_query_article(ArticlePageQueryDTO){
     const response = await axios.get('/admin/article/page',{
         params:{
-          'articleName':ArticlePageQueryDTO.articleName,
+          'articleTitle':ArticlePageQueryDTO.articleTitle,
           'tagIds':ArticlePageQueryDTO.tagIds,
           'page':ArticlePageQueryDTO.page,
           'pageSize':ArticlePageQueryDTO.pageSize,
