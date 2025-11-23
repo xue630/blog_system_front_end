@@ -13,7 +13,15 @@
         </div>
     </div>
     <div class="bottom">
+        <div class="bottom-icp">
             <el-link href="https://beian.miit.gov.cn/" target="_blank" style="color: white;">苏ICP备2025220640号-1</el-link>
+        </div>
+            
+            
+        <div class="button-gonan">
+            <img src="./备案图标.png" alt="备案图标" style="width: 20px; height: 20px;">
+            <a style="color:white" href="https://beian.mps.gov.cn/#/query/webSearch?code=32131102000933" rel="noreferrer" target="_blank">苏公网安备32131102000933号</a>
+        </div>
         </div>
 </template>
 <script>
@@ -84,5 +92,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+    .bottom-icp{
+        /* background-color: aqua; */
+    }
+    .button-gonan{
+        position: absolute;
+        /* background-color: aquamarine; */
+        top:55px;
     }
 </style>
