@@ -70,7 +70,7 @@
                     <el-form :model="addArticleFile" :rules="file_rules" ref="fileForm">
                         <el-form-item label="封面" prop="coverImage" required>
                             <el-upload 
-                            action="http://localhost:8080/common/upload"
+                            action="/api/common/upload"
                             :on-success="img_file_upload_success"
                             :data="addArticleFile.imageFileName"
                             >
@@ -79,7 +79,7 @@
                         </el-form-item>
                         <el-form-item label="文章文件" prop="articleFile" required>
                             <el-upload 
-                            action="http://localhost:8080/common/upload"
+                            action="/api/common/upload"
                             :on-success="file_upload_success"
                             :data="addArticleFile.articleFileName"
                             >

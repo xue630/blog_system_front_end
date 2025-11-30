@@ -17,6 +17,29 @@
             <div class="header-chat">
                 <el-icon size="35"><ChatRound/></el-icon>
             </div>
+            <div class="header-anno">
+                <el-button type="primary" @click="openAnnoDialog">
+                    <el-icon><Flag /></el-icon>
+                        修改公告
+                    </el-button>
+            </div>
+            <!-- 修改公告弹窗 -->
+            <el-dialog v-model="annoDialogVisible" title="修改公告" width="50%">
+                <el-form :model="annoForm" label-width="80px">
+                    <el-form-item label="公告标题">
+                        <el-input v-model="annoForm.title" placeholder="请输入公告标题"></el-input>
+                    </el-form-item>
+                    <el-form-item label="公告内容">
+                        <el-input type="textarea" v-model="annoForm.content" :rows="6" placeholder="请输入公告内容"></el-input>
+                    </el-form-item>
+                </el-form>
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="annoDialogVisible = false">取消</el-button>
+                        <el-button type="primary" @click="submitAnno">确定</el-button>
+                    </span>
+                </template>
+            </el-dialog>
         </div>
         <div class="aside">
             <div class="header-title">
@@ -54,7 +77,8 @@
 </template>
 <script>
 import { message } from '@/util/message_util/message_util';
-import { logout } from './admin_root_api';
+import { logout, postAnno } from './admin_root_api';
+import { getAnnouncement } from '../tourist_page/tourist_api';
 
 export default{
     methods:{
@@ -95,6 +119,43 @@ export default{
                 console.log("退出登录");
                 await this.logout();
             }
+        },
+        async openAnnoDialog() {
+            try {
+                const response = await getAnnouncement();
+                const annoData = response.data.data || response.data;
+                this.annoForm = {
+                    title: annoData.title || '',
+                    content: annoData.content || ''
+                };
+                this.annoDialogVisible = true;
+            } catch (error) {
+                message('error', '获取公告信息失败');
+                console.error('获取公告信息失败', error);
+            }
+        },
+        async submitAnno() {
+            if (!this.annoForm.title.trim()) {
+                message('warning', '公告标题不能为空');
+                return;
+            }
+            if (!this.annoForm.content.trim()) {
+                message('warning', '公告内容不能为空');
+                return;
+            }
+            
+            try {
+                const response = await postAnno(this.annoForm);
+                if (response.data.code === 0) {
+                    message('success', '公告修改成功');
+                    this.annoDialogVisible = false;
+                } else {
+                    message('error', response.data.message || '公告修改失败');
+                }
+            } catch (error) {
+                message('error', '公告修改失败');
+                console.error('公告修改失败', error);
+            }
         }
     },
     mounted(){
@@ -114,7 +175,12 @@ export default{
     },
     data(){
         return{
-            now_page:'1'
+            now_page:'1',
+            annoDialogVisible: false,
+            annoForm: {
+                title: '',
+                content: ''
+            }
         }
     }
 }
@@ -226,6 +292,11 @@ export default{
         align-items: center;
         cursor: pointer;
         color: white;
+    }
+    .header-anno{
+        position: absolute;
+        right: 19%;
+        top: 30%;
     }
     .profile-photo{
         height: 40px;

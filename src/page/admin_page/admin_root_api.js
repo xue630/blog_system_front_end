@@ -10,3 +10,12 @@ export async function logout(){
     });
     return response;
 }
+
+export async function postAnno(UpdateAnnoDTO) {
+    const response = await axios.post('/admin/user/anno', UpdateAnnoDTO, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response;
+}
