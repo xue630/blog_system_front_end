@@ -14,9 +14,12 @@
                     <el-option value="3" label="修改密码"></el-option>
                 </el-select>
             </div>
-            <div class="header-chat">
-                <el-icon size="35"><ChatRound/></el-icon>
+            <div class="header-chat" @click="chatClick">
+                <el-badge :value="message.count">
+                    <el-icon size="35"><ChatRound/></el-icon>
+                </el-badge>
             </div>
+            
             <div class="header-anno">
                 <el-button type="primary" @click="openAnnoDialog">
                     <el-icon><Flag /></el-icon>
@@ -39,6 +42,42 @@
                         <el-button type="primary" @click="submitAnno">确定</el-button>
                     </span>
                 </template>
+            </el-dialog>
+            
+            <!-- 留言板弹窗 -->
+            <el-dialog v-model="messageDialogVisible" title="留言板" width="70%" top="5vh">
+                <div class="message-tabs">
+                    <el-tabs v-model="activeMessageTab" @tab-click="handleMessageTabClick">
+                        <el-tab-pane label="所有消息" name="all">
+                            <div class="message-list" v-if="allMessages.length > 0">
+                                <div class="message-item" v-for="(msg, index) in allMessages" :key="index" @click="handleMessageClick(msg)">
+                                    <div class="message-header">
+                                        <span class="message-ip">IP: {{ msg.ip }}</span>
+                                        <span class="message-time">{{ formatDate(msg.createTime) }}</span>
+                                        <el-tag :type="msg.status === 1 ? 'success' : 'danger'" size="small">
+                                            {{ msg.status === 1 ? '已读' : '未读' }}
+                                        </el-tag>
+                                    </div>
+                                    <div class="message-content">{{ msg.content }}</div>
+                                </div>
+                            </div>
+                            <el-empty v-else description="暂无留言"></el-empty>
+                        </el-tab-pane>
+                        <el-tab-pane label="未读消息" name="unread">
+                            <div class="message-list" v-if="unreadMessages.length > 0">
+                                <div class="message-item" v-for="(msg, index) in unreadMessages" :key="index" @click="handleMessageClick(msg)">
+                                    <div class="message-header">
+                                        <span class="message-ip">IP: {{ msg.ip }}</span>
+                                        <span class="message-time">{{ formatDate(msg.createTime)}}</span>
+                                        <el-tag type="danger" size="small">未读</el-tag>
+                                    </div>
+                                    <div class="message-content">{{ msg.content }}</div>
+                                </div>
+                            </div>
+                            <el-empty v-else description="暂无未读留言"></el-empty>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
             </el-dialog>
         </div>
         <div class="aside">
@@ -76,12 +115,18 @@
     </div>
 </template>
 <script>
-import { message } from '@/util/message_util/message_util';
-import { logout, postAnno } from './admin_root_api';
+import { message,notifyMessage } from '@/util/message_util/message_util';
+import { logout, postAnno,getMessageCount, getAllMessages, getNewMessages, updateMessageStatus } from './admin_root_api';
 import { getAnnouncement } from '../tourist_page/tourist_api';
 
 export default{
     methods:{
+        async chatClick(){
+            //点击聊天图标,弹窗显示留言
+            this.messageDialogVisible = true;
+            // 加载消息数据
+            await this.loadMessages();
+        },
         async logout(){
             const response = await logout();
             if(response.data.code===0){
@@ -156,9 +201,172 @@ export default{
                 message('error', '公告修改失败');
                 console.error('公告修改失败', error);
             }
+        },
+        // 加载留言数据
+        async loadMessages() {
+            try {
+                // 根据当前激活的标签页加载不同的数据
+                if (this.activeMessageTab === 'all') {
+                    const response = await getAllMessages();
+                    if (response.data.code === 0) {
+                        this.allMessages = response.data.data || [];
+                    } else {
+                        message('error', response.data.message || '获取所有消息失败');
+                    }
+                } else {
+                    const response = await getNewMessages();
+                    if (response.data.code === 0) {
+                        this.unreadMessages = response.data.data || [];
+                    } else {
+                        message('error', response.data.message || '获取未读消息失败');
+                    }
+                }
+            } catch (error) {
+                message('error', '获取消息失败');
+                console.error('获取消息失败', error);
+            }
+        },
+        // 处理标签页切换
+        handleMessageTabClick() {
+            this.loadMessages();
+        },
+        // 格式化时间
+        formatDate(dateString) {
+            // 格式化日期
+            if (!dateString) return '';
+            
+            // 直接使用字符串分割处理
+            // 格式为 "yyyy-MM-dd HH:mm:ss" 或类似格式
+            let dateParts = null;
+            let count = -1;
+            let i="";
+            dateString.forEach(element =>{
+                if(count===2){
+                    i=' ';
+                }else if(count<=2){
+                    i='-'
+                }else{
+                    i=':'
+                }
+                if(dateParts===null){
+                    dateParts=element;
+                }else{
+                    dateParts=dateParts+i+element;
+                }
+                count++;
+            });
+            
+            return dateParts; // 直接返回日期部分
+        },
+        // 处理消息点击事件
+        handleMessageClick(msg) {
+            // 如果消息已经是已读状态，不执行任何操作
+            if (msg.status === 1) {
+                return;
+            }
+
+            // 弹出确认框
+            this.$confirm(`确认将IP为 ${msg.ip} 的消息标记为已读吗？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                try {
+                    // 调用API更新消息状态
+                    const response = await updateMessageStatus(msg.id, 1);
+                    if (response.data.code === 0) {
+                        message('success', '消息已标记为已读');
+                        // 重新加载消息列表
+                        await this.loadMessages();
+                        // 更新未读消息数量
+                        const countResponse = await getMessageCount();
+                        this.message.count = countResponse.data.data;
+                    } else {
+                        message('error', response.data.message || '标记消息失败');
+                    }
+                } catch (error) {
+                    message('error', '标记消息失败');
+                    console.error('标记消息失败', error);
+                }
+            }).catch(() => {
+                // 用户取消操作，不执行任何操作
+            });
+        },
+
+
+        //websocket相关操作
+        initWebSocket() {
+            const wsUrl = 'ws://localhost:8080/ws/admin'; // WebSocket服务器地址
+            this.websocketStatus.ws = new WebSocket(wsUrl); // 创建WebSocket连接
+            this.websocketStatus.ws.onopen = () => {
+                console.log('连接成功');
+                this.isConnected = true;
+            };
+      
+            // 收到消息时触发
+            this.websocketStatus.ws.onmessage = (event) => {
+                // event.data 是服务器发来的消息
+                const message = event.data;
+                console.log('收到消息:', message);
+                if(typeof message === 'string' && message==='pong'){
+                    // 心跳响应
+                    console.log('收到心跳响应');
+                    return;
+                }
+                notifyMessage('info','您有一条新的留言消息!');
+                getMessageCount().then(response=>{
+                    this.message.count=response.data.data;
+                }).catch(error=>{
+                    console.error('获取新留言数量失败',error);
+                });
+            };
+
+            // 连接关闭时触发
+            this.websocketStatus.ws.onclose = () => {
+                console.log('连接关闭');
+                this.isConnected = false;
+            };
+
+            // 连接错误时触发
+            this.websocketStatus.ws.onerror = (error) => {
+                console.error('连接错误:', error);
+                this.isConnected = false;
+            };
+        },
+        // 发送消息
+        sendMessage(data) {
+            if (!this.websocketStatus.ws || !this.isConnected) {
+                alert('未连接服务器');
+                return;
+            }
+            this.websocketStatus.ws.send(JSON.stringify(data));
+        },
+        closeWebSocket() {
+            if (this.websocketStatus.ws) {
+                this.websocketStatus.ws.close();  // 断开连接
+                this.websocketStatus.ws = null;
+            }
+        },
+        startHeartbeat() {
+            // 每30秒发送一次心跳
+            this.heartbeatTimer = setInterval(() => {
+            if (this.isConnected) {
+                this.websocketStatus.ws.send(JSON.stringify('ping'));
+            }
+            }, 30000);
+        },
+    
+        stopHeartbeat() {
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
         }
+        },
+        
     },
-    mounted(){
+        
+    async mounted(){
+        await this.initWebSocket();//建立连接
+        this.startHeartbeat(); // 启动心跳
         // 获取当前路由路径
         const currentPath = this.$route.path;
         if(currentPath==="/admin"){
@@ -172,6 +380,15 @@ export default{
         }else{
             this.now_page="4";
         }
+        getMessageCount().then(response=>{
+            this.message.count=response.data.data;
+        }).catch(error=>{
+            console.error('获取新留言数量失败',error);
+        });
+    },
+    async beforeUnmount() {
+        await this.closeWebSocket(); // 组件销毁时断开连接
+        this.stopHeartbeat(); // 停止心跳
     },
     data(){
         return{
@@ -180,7 +397,23 @@ export default{
             annoForm: {
                 title: '',
                 content: ''
-            }
+            },
+            message:{
+                count:0,
+            },
+            // 留言板相关数据
+            messageDialogVisible: false,
+            activeMessageTab: 'all',
+            allMessages: [],
+            unreadMessages: [],
+
+
+            websocketStatus:{
+                ws:'',
+                connected:false, // WebSocket是否连接
+                messages:[]// 存储消息
+            },
+            heartbeatTimer:null,// 心跳定时器
         }
     }
 }
@@ -324,5 +557,45 @@ export default{
     
     .header-select-box{
         width: auto;
+    }
+    
+    /* 留言板样式 */
+    .message-tabs {
+        height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .message-list {
+        max-height: 55vh;
+        overflow-y: auto;
+    }
+    
+    .message-item {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        transition: all 0.3s;
+    }
+    
+    .message-item:hover {
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .message-content {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #333;
+        word-break: break-all;
     }
 </style>

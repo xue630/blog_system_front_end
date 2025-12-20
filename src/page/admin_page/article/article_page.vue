@@ -276,7 +276,7 @@ import { message } from '@/util/message_util/message_util';
                     articleTitle:'',//√
                     tagIds:[],//√
                     page:1,
-                    pageSize:8,
+                    pageSize:7,
                     categoryId:'',//√
                 },
 
@@ -599,32 +599,33 @@ import { message } from '@/util/message_util/message_util';
         word-break: break-all; /* 长单词换行 */
     }
     .article-list-container{
+        position: relative;
         width:100%;
         height:100%;
-        /* background-color: bisque; */
+        background-color: bisque;
     }
     .article-table-top{
-        position: absolute;
-        top:0;
+        position: relative;
+        /* top:0; */
         height: 15%;
         /* background-color: aqua; */
         width: 100%;
     }
     .table-message{
-        position: absolute;
-        top:15%;
-        height:71%;
+        position: relative;
+        /* top:15%; */
+        height:75%;
         width: 100%;
         /* 一页八条 */
         /* background-color: blue; */
     }
     .table-pagination{
-        position: absolute;
+        position: relative;
         /* background-color: antiquewhite; */
-        top: 89%;
+        /* top: 89%; */
         width:60%;
         left: 21%;
-        height: 8%;
+        height: 5%;
         display: flex;
         place-items: center; 
         justify-content: center;

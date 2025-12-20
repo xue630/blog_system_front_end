@@ -12,6 +12,29 @@
                         公告
                     </el-button>
                 </div>
+                <div class="message">
+                    <el-button type="primary" @click="messageClick">
+                        <el-icon><Message /></el-icon>
+                        留言
+                    </el-button>
+                </div>
+
+
+
+                <el-dialog v-model="showMessageDialog">
+                    <el-input
+                        v-model="SendMessageDTO.content"
+                        type="textarea"
+                        placeholder="请输入多行文本"
+                        maxlength="200"
+                        />
+                    <template #footer>
+                            <el-button type="primary" @click="message_dialog_confirm">确定</el-button>
+                        </template>
+                </el-dialog>
+
+
+
                 <el-dialog v-model="showDialog" >
                     <div style="text-align: center;">{{AnnoVO.title}}</div>
                     <br/>
@@ -42,11 +65,39 @@
         </div>
 </template>
 <script>
-import { getAnnouncement } from './tourist_api';
+import { getAnnouncement, postMessage } from './tourist_api';
 
 
     export default{
         methods:{
+            messageClick(){
+                //留言按钮点击发生事件
+                this.showMessageDialog=true;
+            },
+            async message_dialog_confirm(){
+                //留言弹窗确认按钮点击事件
+                if(this.SendMessageDTO.content===''){
+                    this.$message({
+                        message: '留言内容不能为空',
+                        type: 'warning'
+                    });
+                    return;
+                }
+                console.log('留言内容',this.SendMessageDTO);
+                const response = await postMessage(this.SendMessageDTO);
+                if(response.data.code===0){
+                this.$message({
+                    message: '留言发送成功，感谢您的支持！',
+                    type: 'success'
+                });
+            }else{
+                this.$message({
+                    message: '留言发送失败，请稍后再试！',
+                    type: 'error'
+                });
+            }
+                this.showMessageDialog=false;
+            },  
             async annoclick(){
                 const response = await getAnnouncement();
                 this.AnnoVO=response.data.data;
@@ -101,7 +152,13 @@ import { getAnnouncement } from './tourist_api';
                 now_page:'1',
                 showDialog:false,
 
-                AnnoVO: {}
+                showMessageDialog:false,
+                AnnoVO: {},
+                
+
+                SendMessageDTO:{
+                    content: ''
+                }
             }
         },
         mounted(){
@@ -119,6 +176,7 @@ import { getAnnouncement } from './tourist_api';
 </script>
 <style scoped>
     .container{
+        position: relative;
         min-height:100vh;
         /* background-color: rgb(146, 143, 143); */
     }
@@ -136,11 +194,16 @@ import { getAnnouncement } from './tourist_api';
         right: 9%;
         top: 15%;
     }
+    .message{
+        position:absolute;
+        left: 3%;
+        top: 15%;
+    }
     .main{
         position:absolute;
         top:8%;
         width:100%;
-        height:100%;
+        height:97%;
         /* background-color: aquamarine; */
     }
     .header-nav{
