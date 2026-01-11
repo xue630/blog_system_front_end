@@ -12,8 +12,8 @@
 <style scoped>
     .home-main{
         position:absolute;
-        width:100%;
-        height:95%;
+        width:99%;
+        height:92%;
         /* background-color: aquamarine; */
         background-image: url(./background.jpg);
         background-repeat: no-repeat;
