@@ -296,7 +296,8 @@ export default{
 
         //websocket相关操作
         initWebSocket() {
-            const wsUrl = 'ws://localhost:8080/ws/admin'; // WebSocket服务器地址
+            //const wsUrl = 'ws://localhost:8080/ws/admin'; // WebSocket服务器地址
+            const wsUrl = 'wss://www.xueblog.top/ws/admin'; // WebSocket服务器地址
             this.websocketStatus.ws = new WebSocket(wsUrl); // 创建WebSocket连接
             this.websocketStatus.ws.onopen = () => {
                 console.log('连接成功');

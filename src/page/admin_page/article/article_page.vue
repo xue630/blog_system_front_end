@@ -602,7 +602,7 @@ import { message } from '@/util/message_util/message_util';
         position: relative;
         width:100%;
         height:100%;
-        background-color: bisque;
+        /* background-color: bisque; */
     }
     .article-table-top{
         position: relative;

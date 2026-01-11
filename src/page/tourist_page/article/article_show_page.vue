@@ -69,13 +69,11 @@
                         <div>{{formatDate(item.createTime)}}</div>
                     </div>
                 </div>
-
-
-
                 <div class="art-summary">
                     {{item.articleSummary}}
                 </div>
             </div>
+            
 
 
         </div>
@@ -274,6 +272,7 @@ export default{
         width: 100%;
     }
     .art-show-main{
+    /* background-color: #8e2727; */
         position: absolute;
         top: 20%;
         width: 100%;
@@ -392,7 +391,7 @@ export default{
     }
     .select-area{
         position: absolute;
-        top:0%;
+        top:5%;
         width: 100%;
         height: 20%;
         /* background-color: antiquewhite; */
@@ -427,6 +426,7 @@ export default{
     .select-area-tag-button{
         /* background-color: aliceblue; */
         position: absolute;
+        top: 10%;
         height: 35%;
         width: 100%;
         display:flex;

@@ -176,7 +176,8 @@ import { getAnnouncement, postMessage } from './tourist_api';
 </script>
 <style scoped>
     .container{
-        position: relative;
+        display: flex;
+        flex-direction: column;
         min-height:100vh;
         /* background-color: rgb(146, 143, 143); */
     }
@@ -200,10 +201,8 @@ import { getAnnouncement, postMessage } from './tourist_api';
         top: 15%;
     }
     .main{
-        position:absolute;
-        top:8%;
+        flex: 1;
         width:100%;
-        height:97%;
         /* background-color: aquamarine; */
     }
     .header-nav{
@@ -214,7 +213,6 @@ import { getAnnouncement, postMessage } from './tourist_api';
 
     }
     .bottom{
-        position:absolute;
         background-color: #2c3e50;
         width: 100%;
         height: 10%;

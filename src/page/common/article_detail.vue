@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="detail-container">
         <div class="catalog">
             <el-button type="primary" @click="back_article_page">返回文章页</el-button>
             <h1>目录</h1>
@@ -9,7 +9,7 @@
                 </li>
             </ul>
         </div>
-        <div class="main" v-html="content">
+        <div class="detail-main" v-html="content">
             
         </div>
     </div>
@@ -61,67 +61,67 @@ export default{
 </script>
 <style >
 @import 'highlight.js/styles/github-dark.css';
-.container{
+.detail-container{
     min-height: 100vh;
     display: flex;
     width: 100%;
-    /* background-color: aqua; */
 }
 .catalog{
     width: 19%;
-    /* background-color: azure; */
     height: 100vh;
     overflow: auto;
     position: sticky;
     top: 0;
 }
-.main{
-    width: 81%;
+.detail-main{
+    width: 70%;
     height: 100%;
-    /* background-color: beige; */
+    padding: 20px 40px;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
 }
-/* 直接选择markdown-it生成的表格 */
+/* 代码块样式 */
 .hljs{
-    position:relative;
-    left: 10%;
-    width :80%;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    border-radius: 6px;
+    background-color: #f6f8fa;
+    color: #24292e;
+    overflow-x: auto;
+    font-size: 0.9rem;
     max-height: 400px;
-    overflow: auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.main img{
+/* 图片样式 */
+.detail-main img{
     max-width: 100%;
     height: auto;
-    display:block;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 1.5rem auto;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
 }
-.main blockquote {
+.detail-main img:hover{
+    transform: scale(1.01);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+/* 引用块样式 */
+.detail-main blockquote {
     position: relative;
-    margin: 2rem 0;
-    padding: 1.5rem 2rem;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 
-        0 8px 32px rgba(31, 38, 135, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    color: #2c3e50;
-    font-style: italic;
-    line-height: 1.6;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    margin: 1.5rem 0;
+    padding: 0.5rem 1.5rem;
+    border-left: 4px solid #ddd;
+    background-color: #f9f9f9;
+    color: #666;
 }
-.main blockquote:hover {
+/* .main blockquote:hover {
     transform: translateY(-2px);
     box-shadow: 
         0 12px 40px rgba(31, 38, 135, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-.main blockquote::before {
+} */
+.detail-main blockquote::before {
     content: "";
     position: absolute;
     top: 0;
@@ -131,7 +131,7 @@ export default{
     background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
     border-radius: 5px 0 0 5px;
 }
-.main blockquote::after {
+.detail-main blockquote::after {
     content: "";
     position: absolute;
     top: -15px;
@@ -142,12 +142,12 @@ export default{
     font-style: normal;
     line-height: 1;
 }
-.main blockquote p {
+.detail-main blockquote p {
     margin: 0;
     position: relative;
     z-index: 1;
 }
-.main blockquote p:last-of-type {
+.detail-main blockquote p:last-of-type {
     margin-bottom: 0;
 }
 /* .hljs code{
@@ -155,25 +155,25 @@ export default{
     flex-wrap: wrap;
 } */
 
-table{
+.detail-main table{
   border-collapse: collapse;
   width: 100%;
   margin: 1rem 0;
   width: 1000px;
 }
-th{
+.detail-main th{
   background: #f6f8fa;
   border: 1px solid #dfe2e5;
   padding: 6px 5px;
   font-weight: 600;
 }
 
-td{
+.detail-main td{
   border: 1px solid #dfe2e5;
   padding: 6px 5px;
 }
 
-tr:nth-child(2n) {
+.detail-main tr:nth-child(2n) {
   background-color: #f6f8fa;
 }
 /* img {
@@ -225,51 +225,17 @@ tr:nth-child(2n) {
 }
 
 /* 美化文章内容中的列表 */
-.main ul {
-  position: relative;
-  margin: 1.5rem 0;
-  padding: 1.2rem 1.2rem 1.2rem 2.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(31, 38, 135, 0.08);
-  list-style: none;
-  transition: all 0.3s ease;
+.detail-main ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
 }
-.main ul:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(31, 38, 135, 0.12);
-}
-.main ul li {
-  position: relative;
-  padding: 0.5rem 0;
-  color: #2c3e50;
+.detail-main ul li {
+  margin: 0.5rem 0;
   line-height: 1.6;
-  transition: all 0.2s ease;
-}
-.main ul li::before {
-  content: "";
-  position: absolute;
-  left: -1.5rem;
-  top: 0.8rem;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
-}
-.main ul li:hover {
-  color: #4facfe;
-  transform: translateX(5px);
-}
-.main ul li:hover::before {
-  box-shadow: 0 0 0 5px rgba(79, 172, 254, 0.3);
 }
 
 /* 文章内容标题和段落样式 */
-.main h1 {
+.detail-main h1 {
   font-size: 2.2rem;
   font-weight: 700;
   margin: 1.8rem 0 1rem;
@@ -278,7 +244,7 @@ tr:nth-child(2n) {
   position: relative;
   padding-bottom: 0.5rem;
 }
-.main h1::after {
+.detail-main h1::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -288,35 +254,35 @@ tr:nth-child(2n) {
   background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
   border-radius: 3px;
 }
-.main h2 {
+.detail-main h2 {
   font-size: 1.9rem;
   font-weight: 600;
   margin: 1.6rem 0 0.9rem;
   color: #2d3748;
   line-height: 1.35;
 }
-.main h3 {
+.detail-main h3 {
   font-size: 1.6rem;
   font-weight: 600;
   margin: 1.4rem 0 0.8rem;
   color: #2d3748;
   line-height: 1.4;
 }
-.main h4 {
+.detail-main h4 {
   font-size: 1.3rem;
   font-weight: 600;
   margin: 1.2rem 0 0.7rem;
   color: #4a5568;
   line-height: 1.45;
 }
-.main h5 {
+.detail-main h5 {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 1rem 0 0.6rem;
   color: #4a5568;
   line-height: 1.5;
 }
-.main p {
+.detail-main p {
   font-size: 1rem;
   line-height: 1.7;
   margin: 1rem 0;
@@ -324,54 +290,13 @@ tr:nth-child(2n) {
   text-align: justify;
 }
 
-/* 美化文章内容中的有序列表 */
-.main ol {
-  position: relative;
-  margin: 1.5rem 0;
-  padding: 1.2rem 1.2rem 1.2rem 2.5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(31, 38, 135, 0.08);
-  list-style: none;
-  counter-reset: item;
-  transition: all 0.3s ease;
+/* 有序列表样式 */
+.detail-main ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
 }
-.main ol:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(31, 38, 135, 0.12);
-}
-.main ol li {
-  position: relative;
-  padding: 0.5rem 0;
-  color: #2c3e50;
+.detail-main ol li {
+  margin: 0.5rem 0;
   line-height: 1.6;
-  counter-increment: item;
-  transition: all 0.2s ease;
-}
-.main ol li::before {
-  content: counter(item);
-  position: absolute;
-  left: -1.8rem;
-  top: 0.5rem;
-  width: 1.4rem;
-  height: 1.4rem;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.4rem;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-.main ol li:hover {
-  color: #667eea;
-  transform: translateX(5px);
-}
-.main ol li:hover::before {
-  box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.3);
 }
 </style>
