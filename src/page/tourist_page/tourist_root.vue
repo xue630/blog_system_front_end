@@ -195,7 +195,7 @@ import { getAnnouncement, postMessage } from './tourist_api';
     }
     .anno{
         /* position:absolute; */
-        /* background-color: aquamarine; */
+        background-color: white;
         /* right: 9%; */
         top: 0%;
         height: auto;
@@ -206,7 +206,7 @@ import { getAnnouncement, postMessage } from './tourist_api';
         
     }
     .message{
-        /* background-color: aqua; */
+        background-color: white;
         /* position:absolute; */
         /* left: 3%; */
         top: 0%;
@@ -232,7 +232,7 @@ import { getAnnouncement, postMessage } from './tourist_api';
         flex: 1;
         width:100%;
         max-height: 100%;
-        background-color: aquamarine;
+        /* background-color: aquamarine; */
     }
     
     .bottom{

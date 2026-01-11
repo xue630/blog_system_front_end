@@ -12,21 +12,16 @@
                 </div>
                 <div class="select-area-category">
 
-
-                    <el-select placeholder="请选择文章类型" v-model="ArticleListDTO.categoryId" class="select-area-category" @change="category_change_select" clearable>
-
-
-
-                    <el-option v-for="(item) in category" :key="item.id" :label="item.categoryName" :value="item.id" />
-
-                </el-select>
+                    <div style="width: 200px;">
+                        <el-select placeholder="请选择文章类型" v-model="ArticleListDTO.categoryId" @change="category_change_select" clearable>
+                        <el-option v-for="(item) in category" :key="item.id" :label="item.categoryName" :value="item.id" />
+                        </el-select>
+                    </div>   
                 </div>
-
-
 
                 <div class="select-area-tag-area">
                     <div class="select-area-tag-button">
-                        <el-button type="primary" style="width: 25%; height: 50%;" @click="open_dialog">修改标签</el-button>
+                        <el-button type="primary" style="width: 33%; height: 50%;" @click="open_dialog">修改标签</el-button>
                     </div>
                     <div class="select-area-tag-label">
                         <el-tag v-for="item in tags" :key="item.id" closable @close="close_tag(item)">{{item.tagName}}</el-tag>
@@ -268,16 +263,28 @@ export default{
 <style scoped>
     .art-container{
         /* background-color: aquamarine; */
-        height:100%;
+        display: flex;
+        height: 1000px;
         width: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .select-area{
+        /* position: absolute; */
+        /* top:5%; */
+        width: 100%;
+        height: 20%;
+        /* background-color: antiquewhite; */
+        display: flex;
+        justify-content: center;
     }
     .art-show-main{
     /* background-color: #8e2727; */
-        position: absolute;
-        top: 20%;
+        /* position: absolute; */
         width: 100%;
         height: 80%;
         padding: 0 30px;
+        /* max-height: 600px; */
         box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
@@ -389,45 +396,54 @@ export default{
         padding: 0 20px 20px;
         box-sizing: border-box;
     }
-    .select-area{
-        position: absolute;
-        top:5%;
-        width: 100%;
-        height: 20%;
-        /* background-color: antiquewhite; */
-    }
+
     .select-area-name-input{
-        position:absolute;
+        /* position:absolute; */
         /* background-color: aquamarine;  */
-        top: 35%;
-        left: 13%;
+        /* top: 35%; */
+        /* left: 13%; */
         width: 15%;
+        height: auto;
+        display: flex;
+        align-items: center;
     }
     .select-area-select-button{
-        position: absolute;
-        left: 30%;
-        top: 35%;
+        /* position: absolute; */
+        /* left: 30%; */
+        /* top: 35%; */
+        /* background-color: blue; */
+        height: auto;
+        display: flex;
+        align-items: center;
     }
     .select-area-category{
-        position: absolute;
-        background-color: bisque;
-        left: 30%;
+        /* position: absolute; */
+        /* background-color: bisque; */
+        /* left: 30%; */
         width: 40%;
-        top: 35%;
+        /* top: 35%; */
         /* width: 15%; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
+
     .select-area-tag-area{
-        position: absolute;
-        left: 65%;
+        /* position: absolute; */
+        /* left: 65%; */
         width: 30%;
         height: 100%;
         /* background-color: aquamarine; */
+        display: flex;
+        direction: column;
+        justify-content: center;
+        align-items: center;
     }
     .select-area-tag-button{
-        /* background-color: aliceblue; */
-        position: absolute;
-        top: 10%;
-        height: 35%;
+        /* background-color: rgb(32, 95, 150); */
+        /* position: absolute; */
+        /* top: 10%; */
+        height: 50%;
         width: 100%;
         display:flex;
         justify-content: center;
@@ -435,14 +451,17 @@ export default{
 
     }
     .select-area-tag-label{
-        position: absolute;
-        top: 35%;
+        /* position: absolute; */
+        /* top: 35%; */
         width: 100%;
-        height: 65%;
+        height: 100%;
         /* background-color: rgb(47, 135, 77); */
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
     }
     .artList-empty{
         position: absolute;
