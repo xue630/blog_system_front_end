@@ -459,7 +459,7 @@ export default{
     }
     .artList-empty{
         position: absolute;
-        top: 15%;
+        top: 50%;
         left: 25%;
         width: 50%;
         height: 50%;
