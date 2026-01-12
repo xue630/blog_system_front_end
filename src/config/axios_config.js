@@ -6,6 +6,7 @@ const axios_interceptor = axios.create({
     baseURL:'http://localhost:8080',
     // baseURL:'/api',
     withCredentials: true //生效httpOnlyCoolie
+    //测试git
 });
 
 //配置响应拦截器

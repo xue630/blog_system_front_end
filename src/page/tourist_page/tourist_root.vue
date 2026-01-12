@@ -1,26 +1,25 @@
 <template>
     <div class="container">
         <div class="header">         
-                <el-menu :default-active="now_page" mode="horizontal" class="header-nav" @select="select">
-                    <el-menu-item index="1">首页</el-menu-item>
-                    <el-menu-item index="2">文章</el-menu-item>
-                    <el-menu-item index="3">关于我</el-menu-item>
-                </el-menu>
                 <div class="anno">
                     <el-button type="primary" @click="annoclick">
                         <el-icon><Flag /></el-icon>
                         公告
                     </el-button>
                 </div>
+                <div class="header-nav">
+                <el-menu :default-active="now_page" mode="horizontal" class="header-nav-content" @select="select">
+                    <el-menu-item index="1">首页</el-menu-item>
+                    <el-menu-item index="2">文章</el-menu-item>
+                    <el-menu-item index="3">关于我</el-menu-item>
+                </el-menu>
+            </div>
                 <div class="message">
                     <el-button type="primary" @click="messageClick">
                         <el-icon><Message /></el-icon>
                         留言
                     </el-button>
                 </div>
-
-
-
                 <el-dialog v-model="showMessageDialog">
                     <el-input
                         v-model="SendMessageDTO.content"
@@ -51,8 +50,7 @@
         <div class="main">
             <router-view></router-view>
         </div>
-    </div>
-    <div class="bottom">
+        <div class="bottom">
         <div class="bottom-icp">
             <el-link href="https://beian.miit.gov.cn/" target="_blank" style="color: white;">苏ICP备2025220640号-1</el-link>
         </div>
@@ -62,7 +60,9 @@
             <img src="./备案图标.png" alt="备案图标" style="width: 20px; height: 20px;">
             <a style="color:white" href="https://beian.mps.gov.cn/#/query/webSearch?code=32131102000933" rel="noreferrer" target="_blank">苏公网安备32131102000933号</a>
         </div>
-        </div>
+    </div>
+    </div>
+    
 </template>
 <script>
 import { getAnnouncement, postMessage } from './tourist_api';
@@ -178,7 +178,7 @@ import { getAnnouncement, postMessage } from './tourist_api';
     .container{
         display: flex;
         flex-direction: column;
-        min-height:100vh;
+        min-height:105vh;
         /* background-color: rgb(146, 143, 143); */
     }
     .header{
@@ -187,31 +187,54 @@ import { getAnnouncement, postMessage } from './tourist_api';
         top:0%;
         height:10%;
         width:100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
         /* background-color: rgb(238, 244, 239); */
         /* border: red 8px solid; */
     }
     .anno{
-        position:absolute;
-        right: 9%;
-        top: 15%;
+        /* position:absolute; */
+        background-color: white;
+        /* right: 9%; */
+        top: 0%;
+        height: auto;
+        width: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
     }
     .message{
-        position:absolute;
-        left: 3%;
-        top: 15%;
-    }
-    .main{
-        flex: 1;
-        width:100%;
-        /* background-color: aquamarine; */
+        background-color: white;
+        /* position:absolute; */
+        /* left: 3%; */
+        top: 0%;
+        /* top: 15%; */
+        height: auto;
+        width:15%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
     }
     .header-nav{
-        /* background-color: antiquewhite; */
-        width:100%;
+        background-color: antiquewhite;
+        width:70%;
         justify-content: center;
         /* height:100%; */
 
     }
+    .header-nav-content{
+        display: flex;
+        justify-content: center;
+    }
+    .main{
+        flex: 1;
+        width:100%;
+        max-height: 100%;
+        /* background-color: aquamarine; */
+    }
+    
     .bottom{
         background-color: #2c3e50;
         width: 100%;
