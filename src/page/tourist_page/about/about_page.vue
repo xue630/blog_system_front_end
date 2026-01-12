@@ -31,8 +31,9 @@
 .about-page-container{
     /* background-color: aquamarine; */
     width: 100%;
-    height: 95%;
-    background-image: url('./about.png');
+    height: 100vh;
+    /* background-image: url('./about.png'); */
+    background-image: url("https://xuebucket1.oss-cn-beijing.aliyuncs.com/about.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;

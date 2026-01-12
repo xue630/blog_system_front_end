@@ -440,9 +440,6 @@ export default{
         align-items: center;
     }
     .select-area-tag-button{
-        /* background-color: rgb(32, 95, 150); */
-        /* position: absolute; */
-        /* top: 10%; */
         height: 50%;
         width: 100%;
         display:flex;
@@ -451,11 +448,8 @@ export default{
 
     }
     .select-area-tag-label{
-        /* position: absolute; */
-        /* top: 35%; */
         width: 100%;
         height: 100%;
-        /* background-color: rgb(47, 135, 77); */
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
