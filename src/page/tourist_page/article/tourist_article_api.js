@@ -10,6 +10,16 @@ export async function tourist_get_article_list(ArticleListDTO) {
     });
     return response;
 }
+export async function tourist_get_article_list_by_sort(ArticleListDTO) {
+    const response = await axios.get('/tourist/article/bypv',{
+        params:{
+            'articleTitle':ArticleListDTO.articleTitle,
+            'tagIds':ArticleListDTO.tagIds,
+            'categoryId':ArticleListDTO.categoryId
+        }
+    });
+    return response;
+}
 
 
 export async function tourist_get_all_category() {

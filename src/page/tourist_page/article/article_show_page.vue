@@ -19,6 +19,15 @@
                     </div>   
                 </div>
 
+                <div class="select-area-sort">
+                    <div style="width: 200px;">
+                        <el-select placeholder="排序方式" v-model="sortType" @change="sort_change_select" clearable>
+                            <el-option label="默认排序" value="default" />
+                            <el-option label="按访问量排序" value="views" />
+                        </el-select>
+                    </div>   
+                </div>
+
                 <div class="select-area-tag-area">
                     <div class="select-area-tag-button">
                         <el-button type="primary" style="width: 33%; height: 50%;" @click="open_dialog">修改标签</el-button>
@@ -63,6 +72,10 @@
                         <!-- 展示创建时间 -->
                         <div>{{formatDate(item.createTime)}}</div>
                     </div>
+                    <div class="art-page-views">
+                        <div>访问量：</div>
+                        <div>{{item.viewCount || 0}}</div>
+                    </div>
                 </div>
                 <div class="art-summary">
                     {{item.articleSummary}}
@@ -75,27 +88,41 @@
     </div>
 </template>
 <script>
-import { tourist_get_article_list,tourist_get_all_category,tourist_get_all_tag } from './tourist_article_api';
+import { tourist_get_article_list,tourist_get_all_category,tourist_get_all_tag,tourist_get_article_list_by_sort } from './tourist_article_api';
 import { StorageHelper } from '@/config/local_storage';
 export default{
 
     methods:{
-        async category_change_select(value){
-            //获取当前选择的内容
-            
-            // console.log(this.checkArticleCate);
-
-            const response = await tourist_get_article_list(this.ArticleListDTO);
+        async sort_change_select(value){
+            //排序方式改变触发功能
+            console.log("排序方式改变",value);
+            // 根据排序方式重新请求数据
+            await this.fetch_article_list();
+        },
+        async fetch_article_list(){
+            //统一的获取文章列表方法，根据排序方式选择不同接口
+            let response;
+            if(this.sortType === 'views'){
+                response = await tourist_get_article_list_by_sort(this.ArticleListDTO);
+            }else{
+                response = await tourist_get_article_list(this.ArticleListDTO);
+            }
             this.artList = response.data.data;
 
             this.artList.forEach(element => {//将分类ID翻译为分类名称
-            const categoryItem = this.category.find(item => item.id === element.categoryId);
-            if (categoryItem) {
-                element.categoryName = categoryItem.categoryName;
-            } else {
-                element.categoryName = "未分类";
-            }
-        });
+                const categoryItem = this.category.find(item => item.id === element.categoryId);
+                if (categoryItem) {
+                    element.categoryName = categoryItem.categoryName;
+                } else {
+                    element.categoryName = "未分类";
+                }
+            });
+        },
+        
+        async category_change_select(value){
+            //获取当前选择的内容
+            // console.log(this.checkArticleCate);
+            await this.fetch_article_list();
         },
         async close_tag(item){
             //标签关闭按钮
@@ -103,17 +130,7 @@ export default{
             this.tags.splice(this.tags.indexOf(item),1);
             this.ArticleListDTO.tagIds.splice(this.ArticleListDTO.tagIds.indexOf(item.id),1);
             
-            const response = await tourist_get_article_list(this.ArticleListDTO);
-            this.artList = response.data.data;
-
-            this.artList.forEach(element => {//将分类ID翻译为分类名称
-            const categoryItem = this.category.find(item => item.id === element.categoryId);
-            if (categoryItem) {
-                element.categoryName = categoryItem.categoryName;
-            } else {
-                element.categoryName = "未分类";
-            }
-        });
+            await this.fetch_article_list();
         },
         get_tag_list(value){
             //获取弹窗的列表
@@ -141,34 +158,14 @@ export default{
             });
 
             // console.log("发送请求，参数：",this.ArticleListDTO);
-            const response = await tourist_get_article_list(this.ArticleListDTO);
-            this.artList = response.data.data;
-
-            this.artList.forEach(element => {//将分类ID翻译为分类名称
-            const categoryItem = this.category.find(item => item.id === element.categoryId);
-            if (categoryItem) {
-                element.categoryName = categoryItem.categoryName;
-            } else {
-                element.categoryName = "未分类";
-            }
-        });
+            await this.fetch_article_list();
         },
 
 
         async select_by_name(){
             //按名称搜索按钮功能
             console.log("搜索按钮被点击",this.ArticleListDTO);
-            const response = await tourist_get_article_list(this.ArticleListDTO);
-            this.artList = response.data.data;
-
-            this.artList.forEach(element => {//将分类ID翻译为分类名称
-            const categoryItem = this.category.find(item => item.id === element.categoryId);
-            if (categoryItem) {
-                element.categoryName = categoryItem.categoryName;
-            } else {
-                element.categoryName = "未分类";
-            }
-        });
+            await this.fetch_article_list();
         },
         click_art_card(item){
             //点击卡片触发信息
@@ -220,6 +217,8 @@ export default{
             allTags:[],//存储后端所有标签
             artList:[],//后端给的文章列表
 
+            sortType:'',//排序方式
+
 
             // checkArticleCate:'',
 
@@ -232,30 +231,18 @@ export default{
         }
     },
     async mounted(){
-        const response = await tourist_get_article_list(this.ArticleListDTO);
         const all_category = await tourist_get_all_category();
         const all_tag = await tourist_get_all_tag();
 
-        // console.log(response.data);
         // console.log(all_category.data);
         // console.log(all_tag.data);
 
-
-        this.artList = response.data.data;
         this.category = all_category.data.data;
         this.allTags = all_tag.data.data;
-        console.log(response);
         console.log(this.category);
 
-
-        this.artList.forEach(element => {//将分类ID翻译为分类名称
-            const categoryItem = this.category.find(item => item.id === element.categoryId);
-            if (categoryItem) {
-                element.categoryName = categoryItem.categoryName;
-            } else {
-                element.categoryName = "未分类";
-            }
-        });
+        // 初始化加载文章列表
+        await this.fetch_article_list();
         console.log(this.artList)
     }
 }
@@ -264,19 +251,28 @@ export default{
     .art-container{
         /* background-color: aquamarine; */
         display: flex;
-        height: 1000px;
+        min-height: 1000px;
         width: 100%;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
+        padding: 0 20px;
+        box-sizing: border-box;
     }
     .select-area{
         /* position: absolute; */
         /* top:5%; */
         width: 100%;
-        height: 20%;
-        /* background-color: antiquewhite; */
+        min-height: 120px;
+        padding: 20px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
         display: flex;
         justify-content: center;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 20px 0;
     }
     .art-show-main{
     /* background-color: #8e2727; */
@@ -383,6 +379,16 @@ export default{
     .art-time > div:first-child {
         margin-right: 6px;
     }
+    .art-page-views{
+        font-size: 13px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        /* margin-bottom: 12px; */
+    }
+    .art-page-views > div:first-child {
+        margin-right: 6px;
+    }
     .art-summary{
         /* 文章摘要区域 */
         font-size: 14px;
@@ -395,6 +401,7 @@ export default{
         -webkit-box-orient: vertical;
         padding: 0 20px 20px;
         box-sizing: border-box;
+        
     }
 
     .select-area-name-input{
@@ -402,7 +409,7 @@ export default{
         /* background-color: aquamarine;  */
         /* top: 35%; */
         /* left: 13%; */
-        width: 15%;
+        min-width: 220px;
         height: auto;
         display: flex;
         align-items: center;
@@ -420,7 +427,19 @@ export default{
         /* position: absolute; */
         /* background-color: bisque; */
         /* left: 30%; */
-        width: 40%;
+        min-width: 200px;
+        /* top: 35%; */
+        /* width: 15%; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .select-area-sort{
+        /* position: absolute; */
+        /* background-color: bisque; */
+        /* left: 30%; */
+        min-width: 200px;
         /* top: 35%; */
         /* width: 15%; */
         display: flex;
@@ -431,31 +450,35 @@ export default{
     .select-area-tag-area{
         /* position: absolute; */
         /* left: 65%; */
-        width: 30%;
-        height: 100%;
+        min-width: 280px;
+        max-width: 350px;
+        /* height: 100%; */
         /* background-color: aquamarine; */
         display: flex;
-        direction: column;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
+        gap: 8px;
     }
     .select-area-tag-button{
-        height: 50%;
+        height: auto;
         width: 100%;
         display:flex;
         justify-content: center;
         align-items: center;
-
     }
     .select-area-tag-label{
         width: 100%;
-        height: 100%;
+        min-height: 32px;
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 8px;
         justify-content: center;
         align-content: center;
         align-items: center;
+        padding: 4px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
     }
     .artList-empty{
         position: absolute;
